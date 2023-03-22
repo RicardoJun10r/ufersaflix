@@ -5,7 +5,6 @@ import { Form } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { useState } from "react";
-import { CalendarContainer } from "react-datepicker";
 
 function ConfigUsuario(){
     const [startDate, setStartDate] = useState(new Date());

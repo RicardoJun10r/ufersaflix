@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { Container } from 'react-bootstrap';
 import logoImage from '../assets/LOGO.png';
 
 class NavbarAdm extends Component {
     render() {
         return (
-            <Container fluid>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
                     <div className="container-fluid">
                         <a className="navbar-brand" href="/"><img src={logoImage} alt="" /></a>
@@ -35,7 +33,6 @@ class NavbarAdm extends Component {
                         </div>
                     </div>
                 </nav>
-            </Container>
         );
     }
 }

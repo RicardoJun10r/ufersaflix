@@ -1,0 +1,15 @@
+NavBar:
+
+    Labels:
+        - Início;
+        - Séries;
+        - Filmes;
+        - Minha Lista;
+    Input:
+        -Pesquisar;
+
+    Configurações:
+        - Perfis;
+        - Cusomizar perfis;
+        - configuração de conta;
+        - Logout;

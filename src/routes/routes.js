@@ -19,28 +19,13 @@ import { AuthContext, AuthProvider } from "../context/authContext";
 
 const Rotas = () => {
 
-  const Private = ({children}) => {
-    const { authenticated, loading } = useContext(AuthContext);
-
-    if(loading){
-      return <div>Carregando...</div>
-    }
-
-    if(!authenticated){
-      return <Navigate to='/login' />;
-    }
-    return children;
-  }
-
   return (
     <BrowserRouter>
-      <AuthProvider>
           <Routes>
             <Route exact path="/login" element={<Login />} />
-            <Route exact path="/" element={<Private><Home /></Private>} />
+            <Route exact path="/" element={<Home />}/>
             <Route exact path="/cadastro" element={<Cadastro />} />
           </Routes>
-        </AuthProvider>
     </BrowserRouter>
   )
 }

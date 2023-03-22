@@ -1,8 +1,6 @@
 import React, { useContext, useState } from "react";
-import logoImage from '../../assets/LOGOloginpng.png';
 import { AuthContext } from "../../context/authContext";
 import { Link } from "react-router-dom";
-import styles from './style.css';
 
 function Login() {
 
