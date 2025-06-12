@@ -1,25 +1,20 @@
-export type Genero = "DRAMA" | "ACAO"
+export interface Movie {
+    id: number;
+    poster_path: string;
+    backdrop_path: string;
+    overview: string;
+    vote_average: number;
+    media_type: 'movie' | 'tv';
 
-export interface Obra {
-    id: string;
-    titulo: string;
-    descricao: string;
-    capaUrl: string;
-    generos: Genero[];
-    classificacaoIndicativa: string;
-    anoLancamento: number;
-    avaliacaoMedia: number;
-    elenco: string[];
-    diretor: string;
-    trailerUrl?: string;
-    duracaoTotalMinutos?: number;
+    // Propriedades de Filme
+    title?: string;
+    release_date?: string;
+
+    // Propriedades de Série de TV
+    name?: string;
+    first_air_date?: string;
 }
 
-export interface Filme extends Obra {
-    duracaoMinutos: number;
-}
-
-export interface Serie extends Obra {
-    numeroTemporadas: number;
-    episodiosPorTemporada: { [key: number]: number };
+export interface ApiMoviesResponse {
+    results: Movie[];
 }

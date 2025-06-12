@@ -1,11 +1,12 @@
-import { ModeToggle } from "./components/mode-toggle"
+import { Outlet } from "react-router"
+import Layout from "./components/layout"
 
 function App() {
 
   return (
-    <>
-      <ModeToggle />
-    </>
+    <Layout>
+      <Outlet />
+    </Layout>
   )
 }
 
