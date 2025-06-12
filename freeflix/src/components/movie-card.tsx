@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Movie } from "@/shared/objects-interfaces";
-import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
@@ -17,18 +17,23 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
     const title = movie.title || movie.name;
 
     return (
-        <div
-            onClick={() => onClick(movie)}
-            className="group relative flex-shrink-0 cursor-pointer transform transition-transform duration-200 ease-in-out hover:z-10 hover:scale-110"
+        <motion.div
+            layoutId={`card-${movie.id}`}
+            className="group relative flex-shrink-0 cursor-pointer w-44"
         >
-            <img
-                src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                alt={`Pôster de ${title}`}
-                className={cn(
-                    "w-40 h-auto object-cover rounded shadow-lg",
-                    "group-hover:ring-2 group-hover:ring-white"
-                )}
-            />
-        </div>
+            <div className="relative transform transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:z-20">
+                <img
+                    src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                    alt={`Pôster de ${title}`}
+                    className="w-full h-auto object-cover rounded shadow-lg"
+                />
+                <div
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded p-3 flex flex-col justify-end"
+                    onClick={() => onClick(movie)}
+                >
+                    <h3 className="text-white font-bold text-base truncate">{title}</h3>
+                </div>
+            </div>
+        </motion.div>
     );
 };
