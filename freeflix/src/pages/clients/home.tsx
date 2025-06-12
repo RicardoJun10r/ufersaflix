@@ -1,29 +1,72 @@
 import React from "react";
-import { motion } from 'framer-motion';
 import type { ApiMoviesResponse, Movie } from "@/shared/objects-interfaces";
 import api from "@/service/api";
 import { MovieDetailsModal } from "@/components/movie-details-modal";
 import { MovieList } from "@/components/movie-list";
 import { Skeleton } from "@/components/ui/skeleton";
-import { HeroSection } from "@/components/hero-section";
+import { Star, Calendar, Film } from "lucide-react";
 
 const LoadingSkeleton = () => (
-    <>
-        <Skeleton className="h-[50vh] w-full" />
-        <div className="container mx-auto p-4 md:p-6 space-y-12">
-            {[...Array(3)].map((_, i) => (
-                <div key={i} className="space-y-4">
+    <div className="space-y-12 py-8">
+        {[...Array(3)].map((_, i) => (
+            <div key={i} className="space-y-6">
+                <div className="flex items-center gap-3">
+                    <Skeleton className="h-8 w-8 rounded-full" />
                     <Skeleton className="h-8 w-64" />
-                    <div className="flex space-x-4">
-                        {[...Array(5)].map((_, j) => (
-                            <Skeleton key={j} className="h-60 w-44" />
-                        ))}
+                </div>
+                <div className="flex space-x-6 overflow-hidden">
+                    {[...Array(5)].map((_, j) => (
+                        <div key={j} className="flex-shrink-0 space-y-3">
+                            <Skeleton className="h-64 w-44 rounded-xl" />
+                            <Skeleton className="h-4 w-36" />
+                            <Skeleton className="h-3 w-24" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        ))}
+    </div>
+);
+
+const HeroSection = ({ movie }: { movie: Movie | null }) => {
+    if (!movie) return null;
+
+    const title = movie.title || movie.name;
+    const BACKDROP_URL = 'https://image.tmdb.org/t/p/w1280';
+
+    return (
+        <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden mb-12">
+            {movie.backdrop_path && (
+                <>
+                    <img
+                        src={`${BACKDROP_URL}${movie.backdrop_path}`}
+                        alt={title}
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                </>
+            )}
+            <div className="absolute bottom-0 left-0 right-0 p-8">
+                <div className="max-w-2xl">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">{title}</h1>
+                    <p className="text-lg text-white/90 mb-6 line-clamp-3">
+                        {movie.overview}
+                    </p>
+                    <div className="flex items-center gap-4 text-white/80">
+                        <div className="flex items-center gap-1">
+                            <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                            <span className="font-semibold">{movie.vote_average.toFixed(1)}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <Calendar className="h-5 w-5" />
+                            <span>{movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}</span>
+                        </div>
                     </div>
                 </div>
-            ))}
+            </div>
         </div>
-    </>
-);
+    );
+};
 
 export default function Home() {
     const [trending, setTrending] = React.useState<Movie[]>([]);
@@ -31,8 +74,6 @@ export default function Home() {
     const [topRatedMovies, setTopRatedMovies] = React.useState<Movie[]>([]);
     const [popularTvShows, setPopularTvShows] = React.useState<Movie[]>([]);
     const [upcomingMovies, setUpcomingMovies] = React.useState<Movie[]>([]);
-
-    const [heroMovie, setHeroMovie] = React.useState<Movie | null>(null);
 
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
@@ -53,14 +94,12 @@ export default function Home() {
                     popularTvShowsResults,
                     upcomingMoviesResults,
                 ] = await Promise.all([
-                    fetchMovies('/trending/movie/week'),
+                    fetchMovies('/trending/all/week'),
                     fetchMovies('/movie/popular'),
                     fetchMovies('/movie/top_rated'),
                     fetchMovies('/tv/popular'),
                     fetchMovies('/movie/upcoming'),
                 ]);
-
-                setHeroMovie(trendingResults[Math.floor(Math.random() * trendingResults.length)]);
 
                 setTrending(trendingResults);
                 setPopularMovies(popularMoviesResults);
@@ -92,40 +131,49 @@ export default function Home() {
     }
 
     if (error) {
-        return <p className="flex justify-center items-center h-screen text-red-500 text-xl">{error}</p>;
+        return (
+            <div className="flex flex-col justify-center items-center h-screen space-y-4">
+                <Film className="h-16 w-16 text-muted-foreground" />
+                <p className="text-red-500 text-xl font-medium">{error}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                    Tentar Novamente
+                </button>
+            </div>
+        );
     }
 
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-        >
-            <HeroSection movie={heroMovie} onMoreInfoClick={handleMovieClick} />
+    const heroMovie = trending[0] || popularMovies[0];
 
-            <div className="container mx-auto p-4 md:p-6 space-y-12">
+    return (
+        <div className="space-y-12 py-8">
+            <HeroSection movie={heroMovie} />
+
+            <div className="space-y-12">
                 <MovieList
-                    title="Em Alta na Semana"
+                    title="🔥 Em Alta na Semana"
                     movies={trending}
                     onMovieClick={handleMovieClick}
                 />
                 <MovieList
-                    title="Filmes Populares"
+                    title="🎬 Filmes Populares"
                     movies={popularMovies}
                     onMovieClick={handleMovieClick}
                 />
                 <MovieList
-                    title="Séries Populares"
+                    title="📺 Séries Populares"
                     movies={popularTvShows}
                     onMovieClick={handleMovieClick}
                 />
                 <MovieList
-                    title="Filmes Mais Votados"
+                    title="⭐ Filmes Mais Votados"
                     movies={topRatedMovies}
                     onMovieClick={handleMovieClick}
                 />
                 <MovieList
-                    title="Em Breve nos Cinemas"
+                    title="🎭 Em Breve nos Cinemas"
                     movies={upcomingMovies}
                     onMovieClick={handleMovieClick}
                 />
@@ -136,6 +184,6 @@ export default function Home() {
                 isOpen={!!selectedMovie}
                 onClose={handleCloseModal}
             />
-        </motion.div>
+        </div>
     );
 }
